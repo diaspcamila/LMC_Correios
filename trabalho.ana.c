@@ -1,9 +1,37 @@
-//trabalho ana luiza
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
+#include <stdbool.h>
 
+//structs
+typedef struct Cliente{
+    char idCliente[9];
+    char nome[50];
+    char rua[50];
+    int numeroRua;
+    char servico[10];
+};
+typedef struct Veiculo{
+    char idVeiculo[9];
+    char tipo[20];
+    int cargaMaxima;
+    bool status;
+};
+typedef struct Funcionario{
+    char idFuncionario[9];
+    char nome[50];
+};
+typedef struct Entrega{
+    char idEntrega[9];
+    char nome[50];
+    char rua[50];
+    char nomeOrigem[50];
+    char ruaOrigem[50];
+    int tempo;
+};
+
+//menus
 void separarMenus(){
     //só pra ficar mais organizado, não tem função nenhuma apenas estética
     printf("\n");
@@ -11,164 +39,253 @@ void separarMenus(){
     printf("\n");
     printf("\n");
     printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
     printf("---------------------------------------------------------\n");
 }
 
-// Espaço das funções de gerenciamento de clientes
-
-typedef struct {
-    char id[10];
-    char nome[50];
-    char rua[50];
-    int numeroRua;
-    char servico[10];
-}Cliente;
-
-void delCliente(Cliente itens[], int numClientes, char idProcurado[]){
-    separarMenus();
-    printf("Bem vindo ao menu de remoção de clientes! \n");
-    printf("Por favor, insira o ID do cliente que deseja remover: ");
-    scanf("%s", idProcurado);
-    for (int i = 0; i < numClientes; i++){
-        if (strcmp(itens[i].id, idProcurado) == 0){
-            strcpy(itens[i].id, "");
-            strcpy(itens[i].nome, "");
-            strcpy(itens[i].rua, "");
-            itens[i].numeroRua = 0;
-            strcpy(itens[i].servico, "");
-            printf("Removendo cliente...");
-            printf("Cliente removido com sucesso!");
-            return;
-        }
-        else {
-            printf("Cliente não encontrado. Por favor, digite novamente.");
-        }
-    }
+int menuPrincipal(){
+    int escolhaInfo;
+    printf("---------------------------------------------------------\n");
+    printf("|                [1] - Gerenciar clientes                |\n");
+    printf("|                [2] - Gerenciar veículos                |\n");
+    printf("|                [3] - Gerenciar funcionários            |\n");
+    printf("|                [4] - Gerenciar entregas                |\n");
+    printf("|                [5] - Voltar                            |\n");
+    printf("---------------------------------------------------------\n");
+    scanf("%d", &escolhaInfo);
+    return escolhaInfo;
 }
 
-void visuCliente(Cliente itens[], int numClientes){
-    separarMenus();
-    printf("Um arquivo .txt será gerado com os dados dos clientes.");
+int menuUniversal(){
+    int escolhaOperacao;
+    printf("---------------------------------------------------------\n");
+    printf("|                    [1] - Cadastrar                     |\n");
+    printf("|                    [2] - Editar                        |\n");
+    printf("|                    [3] - Excluir                       |\n");
+    printf("|                    [4] - Visualizar                    |\n");
+    printf("|                    [5] - Voltar                        |\n");
+    printf("---------------------------------------------------------\n");
+    scanf("%d", &escolhaOperacao);
+    return escolhaOperacao;
+}
+
+//funções edit
+void editCliente(){
     FILE *arquivo;
-    arquivo = fopen("clientes.txt", "w");
-    if (arquivo == NULL){
+    struct Cliente cliente;
+    char idProcuradoC[9];
+    arquivo = fopen("clientes.txt", "rb");
+    if(arquivo == NULL){
         printf("Erro ao abrir o arquivo!");
+        exit(1);
     }
-    for (int i = 0; i < numClientes; i++){
-        fprintf(arquivo, "ID: %s\n", itens[i].id);
-        fprintf(arquivo, "Nome completo: %s\n", itens[i].nome);
-        fprintf(arquivo, "Endereço: %s, %d\n", itens[i].rua, itens[i].numeroRua);
-        fprintf(arquivo, "Serviço: %s\n", itens[i].servico);
+    printf("Digite o ID do cliente que deseja editar: ");
+    scanf("%s", idProcuradoC);
+    while(fread(&cliente, sizeof(struct Cliente), 1, arquivo)){
+        if(strcmp(cliente.idCliente, idProcuradoC) == 0){
+            printf("Digite o novo nome do cliente: \n");
+            scanf("%s", cliente.nome);
+            printf("Digite a nova rua do cliente: \n");
+            scanf("%s", cliente.rua);
+            printf("Digite o novo número da rua do cliente: \n");
+            scanf("%d", &cliente.numeroRua);
+            printf("Digite o novo serviço do cliente: \n");
+            scanf("%s", cliente.servico);
+            fseek(arquivo, -sizeof(struct Cliente), SEEK_CUR);
+            fwrite(&cliente, sizeof(struct Cliente), 1, arquivo);
+            break;
+        } else {
+            printf("Cliente não encontrado!");
+        }
     }
-    printf("Arquivo gerado com sucesso!");
+    fclose(arquivo);
+}
+void editVeiculo(){
+    FILE *arquivo;
+    struct Veiculo veiculo;
+    char idProcuradoV[9];
+    arquivo = fopen("veiculos.txt", "rb");
+    if(arquivo == NULL){
+        printf("Erro ao abrir o arquivo!");
+        exit(1);
+    }
+    printf("Digite o ID do veículo que deseja editar: ");
+    scanf("%s", idProcuradoV);
+    while(fread(&veiculo, sizeof(struct Veiculo), 1, arquivo)){
+        if(strcmp(veiculo.idVeiculo, idProcuradoV) == 0){
+            printf("Digite o novo tipo do veículo: \n");
+            scanf("%s", veiculo.tipo);
+            printf("Digite a nova carga máxima do veículo: \n");
+            scanf("%d", &veiculo.cargaMaxima);
+            printf("Digite o novo status do veículo: \n");
+            scanf("%d", &veiculo.status);
+            fseek(arquivo, -sizeof(struct Veiculo), SEEK_CUR);
+            fwrite(&veiculo, sizeof(struct Veiculo), 1, arquivo);
+            break;
+        } else {
+            printf("Veículo não encontrado!");
+        }
+    }
     fclose(arquivo);
 }
 
-void editCliente(Cliente itens[], int numClientes, char idProcurado[]){
-    separarMenus();
-    printf("Bem vindo ao menu de edição de clientes!");
-    printf("Por favor, insira o ID do cliente que deseja editar: ");
-    scanf("%d", idProcurado);
-    for (int i = 0; i < numClientes; i++){
-        if (strcmp(itens[i].id, idProcurado) == 0){
-            printf("Digite o novo nome do cliente: ");
-            scanf("%s", itens[i].nome);
-            printf("Digite o novo endereço do cliente: ");
-            scanf("%s", itens[i].rua);
-            printf("Digite o novo número do endereço do cliente: ");
-            scanf("%d", &itens[i].numeroRua);
-            printf("Digite o novo serviço do cliente: ");
-            scanf("%s", itens[i].servico);
-            printf("Editando cliente...");
-            printf("Cliente editado com sucesso!");
-            return;
+void editFuncionario(){
+    FILE *arquivo;
+    struct Funcionario funcionario;
+    char idProcuradoF[9];
+    arquivo = fopen("funcionarios.txt", "rb");
+    if(arquivo == NULL){
+        printf("Erro ao abrir o arquivo!");
+        exit(1);
+    }
+    printf("Digite o ID do funcionário que deseja editar: ");
+    scanf("%s", idProcuradoF);
+    while(fread(&funcionario, sizeof(struct Funcionario), 1, arquivo)){
+        if(strcmp(funcionario.idFuncionario, idProcuradoF) == 0){
+            printf("Digite o nome do funcionário: \n");
+            scanf("%s", funcionario.nome);
+            fseek(arquivo, -sizeof(struct Funcionario), SEEK_CUR);
+            fwrite(&funcionario, sizeof(struct Funcionario), 1, arquivo);
+            break;
+        } else {
+            printf("Funcionário não encontrado!");
         }
-        else {
-            printf("Cliente não encontrado. Por favor, digite novamente.");
+    }
+    fclose(arquivo);
+}
+void editEntrega(){
+    FILE *arquivo;
+    struct Entrega entrega;
+    char idProcuradoE[9];
+    arquivo = fopen("entregas.txt", "rb");
+    if (arquivo == NULL){
+        printf("Erro ao abrir o arquivo!");
+        exit(1);
+    }
+    printf("Digite o ID da entrega que deseja editar: ");
+    scanf("%s", idProcuradoE);
+    while (fread(&entrega, sizeof(struct Entrega), 1, arquivo)){
+        if (strcmp(entrega.idEntrega, idProcuradoE) == 0){
+            printf("Digite o novo nome do destinatário: \n");
+            scanf("%s", entrega.nome); 
+            printf("Digite a nova rua do destinatário: \n");
+            scanf("%s", entrega.rua);
+            printf("Digite o novo nome do remetente: \n");
+            scanf("%s", entrega.nomeOrigem);
+            printf("Digite a nova rua do remetente: \n");
+            scanf("%s", entrega.ruaOrigem);
+            printf("Digite o novo tempo de entrega: \n");
+            scanf("%d", &entrega.tempo);
+            fseek(arquivo, -sizeof(struct Entrega), SEEK_CUR);
+            fwrite(&entrega, sizeof(struct Entrega), 1, arquivo);
+            break;
+        } else {
+            printf("Entrega não encontrada!");
         }
     }
 }
 
-void gerenciarClientes(){
-    int escolha;
-    separarMenus();
-    while (escolha != 3)
-    {
-        printf("Informe o que deseja fazer.");
-        printf("[1] Adicionar cliente \n");
-        printf("[2] Deletar cliente \n");
-        printf("[3] Visualizar cliente \n");
+int main() {
+    setlocale(LC_ALL, "Portuguese");
+    int escolhaInfo;
+    int escolhaOperacao;
+    switch (escolhaInfo = menuPrincipal()){
+        case 1: //clientes
+            switch (escolhaOperacao = menuUniversal()){
+                case 1: 
+                    //addCliente();
+                    break;
+                case 2: 
+                    editCliente();
+                    break;
+                case 3: 
+                    //delCliente();
+                    break;
+                case 4: 
+                    //showCliente();
+                    break;
+                case 5: 
+                    printf("Voltando ao menu principal...");
+                    menuPrincipal();   
+                    break;
+                default:
+                printf("Insira uma opção válida para gerenciamento de clientes!");
+                    break;
+            }
+            break;
+    
+        case 2: //veículos
+            switch (escolhaOperacao = menuUniversal()){
+                case 1: 
+                    //addVeiculo();
+                    break;
+                case 2: 
+                    editVeiculo();
+                    break;
+                case 3: 
+                    //delVeiculo();
+                    break;
+                case 4: 
+                    //showVeiculo();
+                    break;
+                case 5: 
+                    printf("Voltando ao menu principal...");
+                    menuPrincipal();   
+                    break;
+                default:
+                printf("Insira uma opção válida para gerenciamento de veículos!");
+                    break;
+            }
+            break;
+        case 3: //funcionários
+            switch (escolhaOperacao = menuUniversal()){
+                case 1: 
+                    //addFuncionario();
+                    break;
+                case 2: 
+                    editFuncionario();
+                    break;
+                case 3: 
+                    //delFuncionario();
+                    break;
+                case 4: 
+                    //showFuncionario();
+                    break;
+                case 5: 
+                    printf("Voltando ao menu principal...");
+                    menuPrincipal();   
+                    break;
+                default:
+                printf("Insira uma opção válida para gerenciamento de funcionários!");
+                    break;
+            }
+            break;
+        case 4: //entregas
+            switch (escolhaOperacao = menuUniversal()){
+                case 1: 
+                    //addEntrega();
+                    break;
+                case 2: 
+                    editEntrega();
+                    break;
+                case 3: 
+                    //delEntrega();
+                    break;
+                case 4: 
+                    //showEntrega();
+                    break;
+                case 5: 
+                    printf("Voltando ao menu principal...");
+                    menuPrincipal();   
+                    break;
+                default:
+                printf("Insira uma opção válida para gerenciamento de entregas!");
+                    break;
+            }
+            break;
+
+    default:
+        printf("Insira uma opção válida para escolher a categoria!");
+        break;
     }
-    switch (escolha){
-        case 1:
-        //addCliente();
-        break;
-        case 2:
-       // delCliente();
-        break;
-        case 3:
-        //visuCliente();
-        break;
-    }
-}
-
-
-void mainMenu(){
-    int escolha;
-    setlocale(LC_ALL,"portuguese");
-    printf("---------------------------------------------------------\n");
-    printf("Olá, seja bem-vindo ao sistema da LMC Correios!\n O que vocé gostaria de fazer?\n");
-    while (escolha !=5){
-        printf("[1] Gerenciar cliente \n");
-        printf("[2] Gerenciar veículos \n");
-        printf("[3] Gerenciar entregas \n");
-        printf("[4] Gerenciar funcionários \n");
-        printf("[5] Sair do sistema");
-    }
-
-    switch (escolha){
-        case 1:
-        gerenciarClientes();
-        break;
-        case 2:
-       // gerenciarVeiculos();
-        break;
-        case 3:
-        //gerenciarEntregas();
-        break;
-        case 4:
-        //gerenciarFuncionarios();
-        break;
-        case 5:
-        printf("Saindo do sistema...");
-        default:
-        printf("Input inválido. Por favor, tente novamente.");
-    }
-}
-
-int main (){
-    Cliente clientes[3] = {
-        {"1", "Ana Luiza", "Rua 1", 1, "Economica"},
-        {"2", "João", "Rua 2", 2, "Premium"},
-        {"3", "Maria", "Rua 3", 3, "Padrão"}
-    };
-    //teste deletando cliente 2
-    delCliente(clientes, 3, "2");
-    //teste visualizando clientes
-    visuCliente(clientes, 3);
-    //teste editando cliente 3
-    editCliente(clientes, 3, "3");
-
-
     return 0;
 }
