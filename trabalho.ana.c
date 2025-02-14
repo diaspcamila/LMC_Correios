@@ -109,17 +109,22 @@ void setupInicial(){
     printf("Caso não insira todas as informações, os dados serão perdidos e a aplicação será abortada! \n");
     //clientes
     cliente.idCliente = 1;
+//MANO O PROBLEMA TA AQUIIIIIIIIIAAAAAAAAAAAAAAAAAAAAAAAAA
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     do{
-        limparBuffer();
         printf("Digite o nome do cliente: \n");
         fgets(cliente.nome, 50, stdin);
-        cliente.nome[strlen(cliente.nome) - 1] = '\0';
+        limparBuffer();
+        cliente.nome[strcspn(cliente.nome, "\n")] = '\0';
         if(contemNumeros(cliente.nome) == 1){
             printf("O nome do cliente não pode conter números! \n");
         }
     }while(cliente.nome[0] == '\0' || contemNumeros(cliente.nome) == 1);
     fprintf(arquivoC, "%d\n %s\n", cliente.idCliente, cliente.nome);
-
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     do{
         printf("Digite a rua do cliente: \n");
         getchar();
