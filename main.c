@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 
-struct Veiculo{
+struct Veiculo {
     int id;
     char tipo[50];
     int carga;
-    int disponivel;
+    int disponivel; // 0 - Indisponivel, 1 - Disponivel
 };
 
 struct Funcionario{
@@ -38,7 +39,8 @@ struct Entrega_e2 {
     struct Veiculo veiculo;
     struct Funcionario funcionario;
 };
-//funções p/ checar se tem numero ou letra onde não deve
+
+//fun��es p/ checar se tem numero ou letra onde n�o deve
 int contemNumeros(const char *str){
     char numeros[] = "0123456789";
     for(int i = 0; str[i] != '\0'; i++){
@@ -77,8 +79,8 @@ int menuPrincipal(){
     printf("---------------------------------------------------------\n");
     printf("|               [0] - Criar arquivos iniciais            |\n");
     printf("|               [1] - Gerenciar clientes                 |\n");
-    printf("|               [2] - Gerenciar veículos                 |\n");
-    printf("|               [3] - Gerenciar funcionários             |\n");
+    printf("|               [2] - Gerenciar ve�culos                 |\n");
+    printf("|               [3] - Gerenciar funcion�rios             |\n");
     printf("|               [4] - Gerenciar entregas                 |\n");
     printf("|               [5] - Voltar                             |\n");
     printf("---------------------------------------------------------\n");
@@ -99,7 +101,7 @@ int menuUniversal(){
     return escolhaOperacao;
 }
 
-//Funções para IDs
+// arquivos iniciais
 void criar_arquivos_iniciais(){
     int ID_incial = 1;
 
@@ -119,7 +121,6 @@ void criar_arquivos_iniciais(){
     fclose(arquivo_id_cliente);
 }
 
-
 void atualizar_id(char caminho[]){
     int num;
     FILE *arquivo = fopen(caminho, "rb");
@@ -133,35 +134,34 @@ void atualizar_id(char caminho[]){
     fclose(arquivo);
 }
 
-
-//FUNÇÕES VEÍCULOS
+//Funcoes dos veiculos
 void criar_veiculo(){
     char tipo[50];
     int carga, disponivel, id_veic;
-    //recolhendo as informações do usuário
+    //recolhendo as informa��es do usu�rio
 
     printf("Digite o tipo e carga do veiculo (em KG) a ser registrado, respectivamente:\n");
     scanf("%s %d", &tipo, &carga);
 
     getchar();
-    printf("O veículo está disponível? Digite '0' para SIM e '1' para NÄO?\n");
+    printf("O ve�culo est� dispon�vel? Digite '0' para SIM e '1' para N�O?\n");
     scanf("%d", &disponivel);
 
-    //montagem da variável tipo veiculo
+    //montagem da vari�vel tipo veiculo
     //tipo e carga
     struct Veiculo veiculo;
     strcpy(veiculo.tipo, tipo);
     veiculo.carga = carga;
     veiculo.disponivel = disponivel;
 
-    //associando ID ao veiculo criado e atualizando arquivo de memória para usos futuros
+    //associando ID ao veiculo criado e atualizando arquivo de mem�ria para usos futuros
     FILE *arquivo_id = fopen("mem_veic.dat","rb");
     fread(&id_veic, sizeof(int), 1, arquivo_id);
     veiculo.id = id_veic;
 
     atualizar_id("mem_veic.dat");
 
-    //armazenando a variável
+    //armazenando a vari�vel
     FILE *arquivo = fopen("veiculos.dat", "ab");
 
     if (arquivo == NULL){
@@ -173,7 +173,6 @@ void criar_veiculo(){
 
     fclose(arquivo);
 }
-
 
 struct Veiculo encontrar_veiculo(int id){
     FILE *banco_de_veiculos = fopen("veiculos.dat", "rb");
@@ -202,12 +201,76 @@ struct Veiculo encontrar_veiculo(int id){
 }
 
 
-//FUNÇÕES FUNCIONARIO
+// Fun��o para armazenar os veiculos do banco de dados em um vetor de structs para entao fazer o necess�rio
+struct Veiculo veiculos[1000];
+int tamanhoV = 0;
+void retirar_veiculos() {
+    FILE *banco_de_veiculos = fopen("veiculos.dat", "rb");
+    if (banco_de_veiculos == NULL) {
+        printf("Erro ao abrir o arquivo de veiculos\n");
+        exit(1);
+    }
+
+    while(1){
+        fseek(banco_de_veiculos, sizeof(struct Veiculo) * tamanhoV, SEEK_SET);
+        fread(&veiculos[tamanhoV], sizeof(struct Veiculo), 1, banco_de_veiculos);
+
+        if(feof(banco_de_veiculos)){
+            fclose(banco_de_veiculos);
+            break;
+        }
+        tamanhoV++;
+    }
+    fclose(banco_de_veiculos);
+}
+
+void view_veiculos(){
+    retirar_veiculos();
+    printf("Esses sao os veiculos cadastrados: \n");
+    for(int k = 0; k < tamanhoV; k++){
+        printf("ID: %d - TIPO: %s - CARGA: %d - DISPONIBILIDADE: %d\n", veiculos[k].id, veiculos[k].tipo, veiculos[k].carga, veiculos[k].disponivel);
+    }
+}
+
+//colocando os veiculos modificados de volta no banco de dados
+void armazenar_veiculos() {
+    FILE *banco_de_veiculos = fopen("veiculos.dat", "wb");
+    if (banco_de_veiculos == NULL) {
+        printf("Erro ao abrir o arquivo de veiculos\n");
+        exit(1);
+    }
+
+    for (int j = 0; j < tamanhoV; j++) {
+        fwrite(&veiculos[j], sizeof(struct Veiculo), 1, banco_de_veiculos);
+    }
+    fclose(banco_de_veiculos);
+    printf("Mudan�a no banco de veiculos concluida!\n");
+}
+
+void delVeiculo() {
+    view_veiculos();
+    printf("Digite o ID do veiculo que deseja deletar: \n");
+    int idProcurado;
+    scanf("%d", &idProcurado);
+    for (int k = 0; k < tamanhoV; k++) {
+        if (idProcurado == veiculos[k].id) {
+            for (int j = k; j < tamanhoV-1; j++){
+                veiculos[j] = veiculos[j + 1];
+            }
+            tamanhoV--;
+            break;
+        }
+    }
+    printf("Veiculo deletado com sucesso!\n");
+    armazenar_veiculos();
+}
+
+//FUN��ES FUNCIONARIO
 void criar_funcionario(){
     char nome[50];
     int id_func;
 
-    printf("Digite o nome completo do Funcionário: ");
+    printf("Digite o nome completo do Funcion�rio: ");
     fflush(stdin);
     fgets(nome, sizeof(nome), stdin);
 
@@ -222,7 +285,7 @@ void criar_funcionario(){
 
     FILE *banco_de_funcionarios = fopen("funcionarios.dat", "ab");
     if (banco_de_funcionarios == NULL){
-        printf("Erro ao armazenar funcionário");
+        printf("Erro ao armazenar funcion�rio");
     } else {
         fwrite(&novo_funcionario, sizeof(novo_funcionario), 1, banco_de_funcionarios);
         printf("Funcionario de ID: %d\nNome: %s\n Armazenado com sucesso", novo_funcionario.id, novo_funcionario.nome);
@@ -257,8 +320,70 @@ struct Funcionario encontrar_funcionario(int id){
     }
 }
 
+struct Funcionario funcionarios[1000];
+int tamanhoF = 0;
+void retirar_funcionario() {
+    FILE *banco_de_funcionarios = fopen("funcionarios.dat", "rb");
+    if (banco_de_funcionarios == NULL) {
+        printf("Erro ao abrir o arquivo de funcionarios\n");
+        exit(1);
+    }
 
-//FUNÇÕES CLIENTES
+    while(1){
+        fseek(banco_de_funcionarios, sizeof(struct Funcionario) * tamanhoF, SEEK_SET);
+        fread(&funcionarios[tamanhoF], sizeof(struct Funcionario), 1, banco_de_funcionarios);
+
+        if(feof(banco_de_funcionarios)){
+            fclose(banco_de_funcionarios);
+            break;
+        }
+        tamanhoF++;
+    }
+    fclose(banco_de_funcionarios);
+}
+
+void view_funcionarios(){
+    retirar_funcionario();
+    printf("Esses sao os funcionarios cadastrados: \n");
+    for(int k = 0; k < tamanhoF; k++){
+        printf("ID: %d - NOME COMPLETO: %s\n", funcionarios[k].id, funcionarios[k].nome);
+    }
+}
+
+//colocando os funcionarios modificados de volta no banco de dados
+void armazenar_funcionarios() {
+    FILE *banco_de_funcionarios = fopen("funcionarios.dat", "wb");
+    if (banco_de_funcionarios == NULL) {
+        printf("Erro ao abrir o arquivo de veiculos\n");
+        exit(1);
+    }
+
+    for (int j = 0; j < tamanhoF; j++) {
+        fwrite(&funcionarios[j], sizeof(struct Funcionario), 1, banco_de_funcionarios);
+    }
+    fclose(banco_de_funcionarios);
+    printf("Mudan�a no banco de funcionarios concluida!\n");
+}
+
+void delFuncionario() {
+    view_funcionarios();
+    printf("Digite o ID do funcionario que deseja deletar: \n");
+    int idProcurado;
+    scanf("%d", &idProcurado);
+    for (int k = 0; k < tamanhoF; k++) {
+        if (idProcurado == veiculos[k].id) {
+            for (int j = k; j < tamanhoF-1; j++){
+                funcionarios[j] = funcionarios[j + 1];
+            }
+            tamanhoF--;
+            printf("Funcionario deletado com sucesso!\n");
+            break;
+        }
+    }
+    armazenar_funcionarios();
+}
+
+//FUN��ES CLIENTES
 void criar_cliente(){
     int id_cliente, servico, numero;
     char nome[50], estado[20], cidade[20], bairro[20], rua[20];
@@ -286,7 +411,7 @@ void criar_cliente(){
     printf("Digite o NUMERO da casa do cliente: \n");
     scanf("%d", &numero);
 
-    printf("Qual é o tipo do servico do cliente? economico (0), padrao(1) ou premium(2)? \n");
+    printf("Qual � o tipo do servico do cliente? economico(0), padrao(1) ou premium(2)? \n");
     scanf("%d", &servico);
 
     FILE *arquivo = fopen("mem_cliente.dat", "rb");
@@ -340,21 +465,82 @@ struct Cliente encontrar_cliente(int id){
         }
     }
 }
+struct Cliente clientes[1000];
+int tamanhoC = 0;
+void retirar_clientes() {
+    FILE *banco_de_clientes = fopen("clientes.dat", "rb");
+    if (banco_de_clientes == NULL) {
+        printf("Erro ao abrir o arquivo de clientes\n");
+        exit(1);
+    }
 
+    while(1){
+        fseek(banco_de_clientes, sizeof(struct Cliente) * tamanhoC, SEEK_SET);
+        fread(&clientes[tamanhoC], sizeof(struct Cliente), 1, banco_de_clientes);
 
-//funções quanto a entregas:
+        if(feof(banco_de_clientes)){
+            fclose(banco_de_clientes);
+            break;
+        }
+        tamanhoC++;
+    }
+    fclose(banco_de_clientes);
+}
+
+void view_clientes(){
+    retirar_clientes();
+    printf("Esses sao os clientes cadastrados: \n");
+    for(int k = 0; k < tamanhoC; k++){
+        printf("ID: %d - NOME COMPLETO: %s - ESTADO: %s - CIDADE: %s - BAIRRO: %s - RUA: %s - NUMERO: %d - SERVICO: %d\n", clientes[k].id, clientes[k].nome, clientes[k].estado, clientes[k].cidade, clientes[k].bairro, clientes[k].rua, clientes[k].numero, clientes[k].servico);
+    }
+}
+
+//colocando os clientes modificados de volta no banco de dados
+void armazenar_clientes() {
+    FILE *banco_de_clientes = fopen("clientes.dat", "wb");
+    if (banco_de_clientes == NULL) {
+        printf("Erro ao abrir o arquivo de clientes\n");
+        exit(1);
+    }
+
+    for (int j = 0; j < tamanhoC; j++) {
+        fwrite(&clientes[j], sizeof(struct Cliente), 1, banco_de_clientes);
+    }
+    fclose(banco_de_clientes);
+    printf("Mudan�a no banco de clientes concluida!\n");
+}
+
+void delCliente() {
+    view_clientes();
+    printf("Digite o ID do cliente que deseja deletar: \n");
+    int idProcurado;
+    scanf("%d", &idProcurado);
+    for (int k = 0; k < tamanhoC; k++) {
+        if (idProcurado == clientes[k].id) {
+            for (int j = k; j < tamanhoC-1; j++){
+                clientes[j] = clientes[j + 1];
+            }
+            tamanhoC--;
+            printf("Cliente deletado com sucesso!\n");
+            break;
+        }
+    }
+    armazenar_clientes();
+}
+
+//fun��es quanto a entregas:
 void planejar_entrega() {
     int id_entrega, tempo_estimado, id_cliente;
     char origem[20];
 
-    //recolhendo informações do usuário
-    printf("Qual é o ID do cliente que vai receber a entrega?\n");
+    //recolhendo informa��es do usu�rio
+    printf("Qual � o ID do cliente que vai receber a entrega?\n");
     scanf("%d", &id_cliente);
 
-    printf("Qual é a CIDADE da cede responsável pela entrega?\n");
+    printf("Qual � a CIDADE da cede respons�vel pela entrega?\n");
     scanf("%s", &origem);
 
-    printf("Em HORAS, qual é o tempo de entrega estimado da entrega?\n");
+    printf("Em HORAS, qual � o tempo de entrega estimado da entrega?\n");
     scanf("%d", &tempo_estimado);
 
     //definindo ID da entrega;
@@ -416,16 +602,68 @@ struct Entrega_e1 encontrar_entrega_planejada(int id_entrega) {
     }
 }
 
+//Funcao deletar a entrega ja realizada
+struct Entrega_e1 vetor_entregas_planejadas[1000];
+int tamanhoE = 0;
+void retirar_entregasPlanejadas() {
+    FILE *banco_de_entregas_planejadas = fopen("entregas_e1.dat", "rb");
+    if (banco_de_entregas_planejadas == NULL) {
+        printf("Erro ao abrir o arquivo de entregas planejadas\n");
+        exit(1);
+    }
+
+    while(1){
+        fseek(banco_de_entregas_planejadas, sizeof(struct Entrega_e1) * tamanhoE, SEEK_SET);
+        fread(&vetor_entregas_planejadas[tamanhoE], sizeof(struct Entrega_e1), 1, banco_de_entregas_planejadas);
+
+        if(feof(banco_de_entregas_planejadas)){
+            fclose(banco_de_entregas_planejadas);
+            break;
+        }
+        tamanhoE++;
+    }
+    fclose(banco_de_entregas_planejadas);
+}
+
+//colocando as entregas planejadas modificadas de volta no banco de dados
+void armazenar_entregasPlanejadas() {
+    FILE *banco_de_entregas_planejadas = fopen("entregas_e1.dat", "wb");
+    if (banco_de_entregas_planejadas == NULL) {
+        printf("Erro ao abrir o arquivo de entregas planejadas\n");
+        exit(1);
+    }
+
+    for (int j = 0; j < tamanhoE; j++) {
+        fwrite(&vetor_entregas_planejadas[j], sizeof(struct Entrega_e1), 1, banco_de_entregas_planejadas);
+    }
+    fclose(banco_de_entregas_planejadas);
+    printf("Mudan�a no banco de entregas planejadas concluida!\n");
+}
+
+void delEntregasPlanejada(int id_DelEntrega_realizada) {
+    retirar_entregasPlanejadas();
+    for (int k = 0; k < tamanhoE; k++) {
+        if (id_DelEntrega_realizada == vetor_entregas_planejadas[k].id) {
+            for (int j = k; j < tamanhoE-1; j++){
+                vetor_entregas_planejadas[j] = vetor_entregas_planejadas[j + 1];
+            }
+            tamanhoE--;
+            printf("Entrega realizada deletada com sucesso!\n");
+            break;
+        }
+    }
+    armazenar_entregasPlanejadas();
+}
 
 void realizar_entrega(int id_entrega_planejada) {
     int id_veiculo = -1, id_funcionario;
 
-    //recolhendo informações do usuário
+    //recolhendo informa��es do usu�rio
 
-    printf("Qual é o ID do funcionario que vai realizar a entrega?\n");
+    printf("Qual � o ID do funcionario que vai realizar a entrega?\n");
     scanf("%d", &id_funcionario);
 
-    //recolhendo o primeiro veículo disponível
+    //recolhendo o primeiro ve�culo dispon�vel
     int num;
 
     FILE *arquivo = fopen("mem_veic.dat", "rb");
@@ -467,9 +705,9 @@ void realizar_entrega(int id_entrega_planejada) {
         fwrite(&nova_entrega_realizada, sizeof(nova_entrega_realizada), 1, arquivo_);
         printf("Entrega armazenada com sucesso.\nID da entrega: %d\n", nova_entrega_realizada.entrega_e1.id);
         //APAGAR ENTREGA PLANEJADA DE ID EQUIVALENTE
+        delEntregasPlanejada(nova_entrega_realizada.entrega_e1.id);
     }
     fclose(arquivo_);
-
 }
 
 
@@ -498,7 +736,6 @@ struct Entrega_e2 encontrar_entrega_realizada(int id_entrega_realizada) {
         }
     }
 }
-
 
 int main() {
 
