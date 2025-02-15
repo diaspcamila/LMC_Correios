@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 
 struct Veiculo{
     int id;
@@ -49,6 +50,11 @@ int contemNumeros(const char *str){
         }
     }
     return 0;
+}
+
+void limparBuffer(){
+    char c;
+    while((c = getchar()) != '\n' && c != EOF);
 }
 
 int contemLetras(const char *str){
@@ -106,7 +112,7 @@ void criar_arquivos_iniciais(){
     FILE *arquivo_id_veic = fopen("mem_veic.dat", "wb");
     FILE *arquivo_id_entreg = fopen("mem_entreg.dat", "wb");
     FILE *arquivo_id_func = fopen("mem_func.dat", "wb");
-    FILE *arquivo_id_cliente = fopen("mem_cliente.dat", "wb");
+    FILE *arquivo_id_cliente = fopen("mem_cliente.txt", "wb");
 
     fwrite(&ID_incial, sizeof(int), 1, arquivo_id_veic);
     fwrite(&ID_incial, sizeof(int), 1, arquivo_id_entreg);
@@ -118,7 +124,6 @@ void criar_arquivos_iniciais(){
     fclose(arquivo_id_func);
     fclose(arquivo_id_cliente);
 }
-
 
 void atualizar_id(char caminho[]){
     int num;
@@ -133,7 +138,6 @@ void atualizar_id(char caminho[]){
     fclose(arquivo);
 }
 
-
 //FUNÇÕES VEÍCULOS
 void criar_veiculo(){
     char tipo[50];
@@ -141,7 +145,7 @@ void criar_veiculo(){
     //recolhendo as informações do usuário
 
     printf("Digite o tipo e carga do veiculo (em KG) a ser registrado, respectivamente:\n");
-    scanf("%s %d", &tipo, &carga);
+    scanf("%s %d", tipo, &carga);
 
     getchar();
     printf("O veículo está disponível? Digite '0' para SIM e '1' para NÄO?\n");
@@ -257,7 +261,6 @@ struct Funcionario encontrar_funcionario(int id){
     }
 }
 
-
 //FUNÇÕES CLIENTES
 void criar_cliente(){
     int id_cliente, servico, numero;
@@ -289,9 +292,9 @@ void criar_cliente(){
     printf("Qual é o tipo do servico do cliente? economico (0), padrao(1) ou premium(2)? \n");
     scanf("%d", &servico);
 
-    FILE *arquivo = fopen("mem_cliente.dat", "rb");
+    FILE *arquivo = fopen("mem_cliente.txt", "rb");
     fread(&id_cliente, sizeof(int), 1, arquivo);
-    atualizar_id("mem_cliente.dat");
+    atualizar_id("mem_cliente.txt");
     fclose(arquivo);
 
 
@@ -341,6 +344,78 @@ struct Cliente encontrar_cliente(int id){
     }
 }
 
+void editCliente(){
+    FILE *arquivo;
+    struct Cliente cliente;
+    int idProcuradoC;
+    arquivo = fopen("clientes.txt", "rb+");
+    if(arquivo == NULL){
+        printf("Erro ao abrir o arquivo!");
+        exit(1);
+    }
+    printf("Digite o ID do cliente que deseja editar: ");
+    scanf("%d", &idProcuradoC);
+    limparBuffer();
+    while(fread(&cliente, sizeof(struct Cliente), 1, arquivo)){
+        if(cliente.id == idProcuradoC){
+            do{
+                printf("Digite o novo nome do cliente: \n");
+                fgets(cliente.nome, 50, stdin);
+                while(contemNumeros(cliente.nome) == 1){
+                    printf("O nome do cliente não pode conter números! Digite novamente: \n");
+                    fgets(cliente.nome, 50, stdin);
+                }
+            }while(cliente.nome[0] == '\0');
+
+            do{
+                printf("Digite a nova rua do cliente: \n");
+                fgets(cliente.rua, 20, stdin);
+                while(cliente.rua[0] == '\n'){
+                    printf("O nome da rua não pode ser vazio! Digite novamente: \n");
+                    fgets(cliente.rua, 20, stdin);
+                }
+            }while(cliente.rua[0] == '\0');
+
+            do{
+                printf("Digite o novo número da rua do cliente: \n");
+                char input[10];
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = '\0';
+                while(contemLetras(input) == 1){
+                    printf("O número da rua não pode conter letras! Digite novamente: \n");
+                    continue;
+                }
+                cliente.numero = atoi(input);
+                if(cliente.numero <= 0){
+                    printf("O número da rua não pode ser negativo ou zero! Digite novamente: \n");
+                }
+            }while(cliente.numero <= 0);
+
+            do{
+                printf("Digite o novo serviço do cliente: \n");
+                char input[10];
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = '\0';
+                while(contemLetras(input) == 1){
+                    printf("O tipo de serviço é classificado como número! Digite novamente: ");
+                    continue;
+                }
+                cliente.servico = atoi(input);
+                if(cliente.servico != '2' || cliente.servico != '1' || cliente.servico != '0'){
+                    printf("Escolha uma opção válida!");
+                }
+            }while(cliente.servico != 2 && cliente.servico != 1 && cliente.servico != 0);
+
+        } else {
+            printf("Cliente não encontrado!");
+            }
+            fseek(arquivo, -sizeof(struct Cliente), SEEK_CUR);
+            fwrite(&cliente, sizeof(struct Cliente), 1, arquivo);
+            break;
+        }
+        fclose(arquivo);
+    }
+
 
 //funções quanto a entregas:
 void planejar_entrega() {
@@ -351,8 +426,8 @@ void planejar_entrega() {
     printf("Qual é o ID do cliente que vai receber a entrega?\n");
     scanf("%d", &id_cliente);
 
-    printf("Qual é a CIDADE da cede responsável pela entrega?\n");
-    scanf("%s", &origem);
+    printf("Qual é a CIDADE da sede responsável pela entrega?\n");
+    scanf("%s", origem);
 
     printf("Em HORAS, qual é o tempo de entrega estimado da entrega?\n");
     scanf("%d", &tempo_estimado);
@@ -501,6 +576,109 @@ struct Entrega_e2 encontrar_entrega_realizada(int id_entrega_realizada) {
 
 
 int main() {
+    setlocale(LC_ALL, "Portuguese");
+    int escolhaInfo;
+    int escolhaOperacao;
+    switch (escolhaInfo = menuPrincipal()){
+        case 0: //criar arquivos iniciais
+            criar_arquivos_iniciais();
+        case 1: //clientes
+            switch (escolhaOperacao = menuUniversal()){
+                case 1:
+                    criar_cliente();
+                    break;
+                case 2:
+                    editCliente();
+                    break;
+                case 3:
+                    //delCliente();
+                    break;
+                case 4:
+                    //showCliente();
+                    break;
+                case 5:
+                    printf("Voltando ao menu principal...");
+                    menuPrincipal();
+                    break;
+                default:
+                    printf("Insira uma opção válida para gerenciamento de clientes!");
+                    break;
+            }
+            break;
 
+        case 2: //veículos
+            switch (escolhaOperacao = menuUniversal()){
+                case 1:
+                    criar_veiculo();
+                    break;
+                case 2:
+                    //editVeiculo();
+                    break;
+                case 3:
+                    //delVeiculo();
+                    break;
+                case 4:
+                    //showVeiculo();
+                    break;
+                case 5:
+                    printf("Voltando ao menu principal...");
+                    menuPrincipal();
+                    break;
+                default:
+                printf("Insira uma opção válida para gerenciamento de veículos!");
+                    break;
+            }
+            break;
+        case 3: //funcionários
+            switch (escolhaOperacao = menuUniversal()){
+                case 1:
+                    criar_funcionario();
+                    break;
+                case 2:
+                    //editFuncionario();
+                    break;
+                case 3:
+                    //delFuncionario();
+                    break;
+                case 4:
+                    //showFuncionario();
+                    break;
+                case 5:
+                    printf("Voltando ao menu principal...");
+                    menuPrincipal();
+                    break;
+                default:
+                printf("Insira uma opção válida para gerenciamento de funcionários!");
+                    break;
+            }
+            break;
+        case 4: //entregas
+            switch (escolhaOperacao = menuUniversal()){
+                case 1:
+                    //addEntrega();
+                    break;
+                case 2:
+                    //editEntrega();
+                    break;
+                case 3:
+                    //delEntrega();
+                    break;
+                case 4:
+                    //showEntrega();
+                    break;
+                case 5:
+                    printf("Voltando ao menu principal...");
+                    menuPrincipal();
+                    break;
+                default:
+                printf("Insira uma opção válida para gerenciamento de entregas!");
+                    break;
+            }
+            break;
+
+    default:
+        printf("Insira uma opção válida para escolher a categoria!");
+        break;
+    }
     return 0;
 }
