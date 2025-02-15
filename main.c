@@ -38,6 +38,30 @@ struct Entrega_e2 {
     struct Veiculo veiculo;
     struct Funcionario funcionario;
 };
+//funções p/ checar se tem numero ou letra onde não deve
+int contemNumeros(const char *str){
+    char numeros[] = "0123456789";
+    for(int i = 0; str[i] != '\0'; i++){
+        for(int j = 0; numeros[j] != '\0'; j++){
+            if(str[i] == numeros[j]){
+                return 1; //encontrou numero!
+            }
+        }
+    }
+    return 0;
+}
+
+int contemLetras(const char *str){
+    char letras[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for(int i = 0; str[i] != '\0'; i++){
+        for(int j = 0; letras[j] != '\0'; j++){
+            if(str[i] == letras[j]){
+                return 1; //encontrou letra!
+            }
+        }
+    }
+    return 0;
+}
 //menus
 void separarMenus(){
     printf("\n");
