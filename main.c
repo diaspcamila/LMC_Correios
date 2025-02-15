@@ -75,12 +75,12 @@ void separarMenus(){
 int menuPrincipal(){
     int escolhaInfo;
     printf("---------------------------------------------------------\n");
-    printf("|               [1] - Criar arquivos iniciais            |\n");
-    printf("|               [2] - Gerenciar clientes                 |\n");
-    printf("|               [3] - Gerenciar veículos                 |\n");
-    printf("|               [4] - Gerenciar funcionários             |\n");
-    printf("|               [5] - Gerenciar entregas                 |\n");
-    printf("|               [6] - Voltar                             |\n");
+    printf("|               [0] - Criar arquivos iniciais            |\n");
+    printf("|               [1] - Gerenciar clientes                 |\n");
+    printf("|               [2] - Gerenciar veículos                 |\n");
+    printf("|               [3] - Gerenciar funcionários             |\n");
+    printf("|               [4] - Gerenciar entregas                 |\n");
+    printf("|               [5] - Voltar                             |\n");
     printf("---------------------------------------------------------\n");
     scanf("%d", &escolhaInfo);
     return escolhaInfo;
