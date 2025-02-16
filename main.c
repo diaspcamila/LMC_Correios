@@ -272,16 +272,17 @@ void delVeiculo() {
 
 void editVeiculo(){
     view_veiculos();
-    int idProcuradoV;
+    int idProcuradoV, encontrado = 0;
     printf("Digite o ID do veículo que deseja editar: ");
     scanf("%d", &idProcuradoV);
-    limparBuffer();
+    fflush(stdin);
     for(int k = 0; k < tamanhoV; k++){
         if(idProcuradoV == veiculos[k].id){
+            encontrado = 1;
             do{
                 printf("Digite o novo tipo do veículo: \n");
                 fgets(veiculos[k].tipo, 50, stdin);
-                limparBuffer();
+                fflush(stdin);
                 while(contemNumeros(veiculos[k].tipo) == 1){
                     printf("O tipo do veículo não pode conter números! Digite novamente: \n");
                     fgets(veiculos[k].tipo, 50, stdin);
@@ -292,11 +293,11 @@ void editVeiculo(){
                 printf("Digite a nova capacidade de carga do veículo: \n");
                 char input[10];
                 fgets(input, sizeof(input), stdin);
-                limparBuffer();
+                fflush(stdin);
                 input[strcspn(input, "\n")] = '\0';
                 while(contemLetras(input) == 1){
                     printf("A capacidade de carga não pode conter letras! Digite novamente: \n");
-                    continue;
+                    fgets(input, sizeof(input), stdin);
                 }
                 veiculos[k].carga = atoi(input);
                 if(veiculos[k].carga <= 0){
@@ -308,21 +309,24 @@ void editVeiculo(){
                 printf("Digite a nova disponibilidade do veículo: \n");
                 char input[10];
                 fgets(input, sizeof(input), stdin);
-                limparBuffer();
+                fflush(stdin);
                 input[strcspn(input, "\n")] = '\0';
                 while(contemLetras(input) == 1){
                     printf("A disponibilidade do veículo é classificada como número! Digite novamente: ");
-                    continue;
+                    fgets(input, sizeof(input), stdin);
                 }
                 veiculos[k].disponivel = atoi(input);
-                if(veiculos[k].disponivel != 1 || veiculos[k].disponivel != 0){
-                    printf("Escolha uma opção válida!");
+                if(veiculos[k].disponivel != 1 && veiculos[k].disponivel != 0){
+                    printf("Escolha uma opção válida!\n");
                 }
-            }while(veiculos[k].disponivel != 1 || veiculos[k].disponivel != 0 || veiculos[k].disponivel == '\0');
+            }while(veiculos[k].disponivel != 1 && veiculos[k].disponivel != 0);
             armazenar_veiculos();
+            }
+        }
+        if(!encontrado){
+            printf("Veiculo não encontrado!");
         }
     }
-}
 //FUN��ES FUNCIONARIO
 void criar_funcionario(){
     char nome[50];
@@ -443,16 +447,17 @@ void delFuncionario() {
 
 void editFuncionario(){
     view_funcionarios();
-    int idProcuradoF;
+    int idProcuradoF, encontrado = 0;
     printf("Digite o ID do funcionário que deseja editar: ");
     scanf("%d", &idProcuradoF);
-    limparBuffer();
+    fflush(stdin);
     for(int k = 0; k < tamanhoF; k++){
         if(idProcuradoF == funcionarios[k].id){
+            encontrado = 1;
             do{
                 printf("Digite o novo nome do funcionário: \n");
                 fgets(funcionarios[k].nome, 50, stdin);
-                limparBuffer();
+                fflush(stdin);
                 while(contemNumeros(funcionarios[k].nome) == 1){
                     printf("O nome do funcionário não pode conter números! Digite novamente: \n");
                     fgets(funcionarios[k].nome, 50, stdin);
@@ -461,6 +466,9 @@ void editFuncionario(){
         }
     }
     armazenar_funcionarios();
+    if(!encontrado){
+        printf("Funcionario não encontrado!");
+    }
 }
 //FUN��ES CLIENTES
 void criar_cliente(){
@@ -609,15 +617,17 @@ void delCliente() {
 
 void editCliente(){
     view_clientes();
-    int idProcurado;
+    int idProcurado, encontrado = 0;
     printf("Digite o ID do cliente que deseja editar: ");
+    fflush(stdin);
     scanf("%d", &idProcurado);
     for(int k = 0; k < tamanhoC; k++){
         if (idProcurado == clientes[k].id){
+                encontrado = 1;
                 do{
                     printf("Digite o novo nome do cliente: \n");
+                    fflush(stdin);
                     fgets(clientes[k].nome, 50, stdin);
-                    limparBuffer();
                     while(contemNumeros(clientes[k].nome) == 1){
                         printf("O nome do cliente não pode conter números! Digite novamente: \n");
                         fgets(clientes[k].nome, 50, stdin);
@@ -626,8 +636,8 @@ void editCliente(){
 
                 do{
                     printf("Digite o novo estado do cliente: \n");
+                    fflush(stdin);
                     fgets(clientes[k].estado, 20, stdin);
-                    limparBuffer();
                     while(contemNumeros(clientes[k].estado) == 1){
                         printf("O estado do cliente não pode conter números! Digite novamente: \n");
                         fgets(clientes[k].estado, 20, stdin);
@@ -636,8 +646,8 @@ void editCliente(){
 
                 do{
                     printf("Digite a nova cidade do cliente: \n");
+                    fflush(stdin);
                     fgets(clientes[k].cidade, 20, stdin);
-                    limparBuffer();
                     while(contemNumeros(clientes[k].cidade) == 1){
                         printf("O nome da cidade não pode conter números! Digite novamente: \n");
                         fgets(clientes[k].cidade, 20, stdin);
@@ -646,8 +656,8 @@ void editCliente(){
 
                 do{
                     printf("Digite o novo bairro do cliente: \n");
+                    fflush(stdin);
                     fgets(clientes[k].bairro, 20, stdin);
-                    limparBuffer();
                     while(contemNumeros(clientes[k].bairro) == 1){
                         printf("O nome do bairro não pode conter números! Digite novamente: \n");
                         fgets(clientes[k].bairro, 20, stdin);
@@ -656,8 +666,8 @@ void editCliente(){
 
                 do{
                     printf("Digite a nova rua do cliente: \n");
+                    fflush(stdin);
                     fgets(clientes[k].rua, 20, stdin);
-                    limparBuffer();
                     while(clientes[k].rua[0] == '\n'){
                         printf("O nome da rua não pode ser vazio! Digite novamente: \n");
                         fgets(clientes[k].rua, 20, stdin);
@@ -666,13 +676,13 @@ void editCliente(){
 
                 do{
                     printf("Digite o novo número da rua do cliente: \n");
+                    fflush(stdin);
                     char input[10];
                     fgets(input, sizeof(input), stdin);
-                    limparBuffer();
                     input[strcspn(input, "\n")] = '\0';
                     while(contemLetras(input) == 1){
                         printf("O número da rua não pode conter letras! Digite novamente: \n");
-                        continue;
+                        fgets(input, sizeof(input), stdin);
                     }
                     clientes[k].numero = atoi(input);
                     if(clientes[k].numero <= 0){
@@ -683,25 +693,30 @@ void editCliente(){
                 do{
                     printf("Digite o novo serviço do cliente: \n");
                     char input[10];
+                    fflush(stdin);
                     fgets(input, sizeof(input), stdin);
-                    limparBuffer();
                     input[strcspn(input, "\n")] = '\0';
-                    while(contemLetras(input) == 1){
-                        printf("O tipo de serviço é classificado como número! Digite novamente: ");
-                        continue;
+                    if (strlen(input) == 0) {
+                        printf("Entrada vazia! Digite um número válido (0, 1 ou 2).\n");
                     }
+                    while(contemLetras(input) == 1){
+                        printf("O tipo de serviço é classificado como número! Digite novamente: \n");
+                        fgets(input, sizeof(input), stdin);
+                    }
+
                     clientes[k].servico = atoi(input);
                     if(clientes[k].servico != 2 && clientes[k].servico != 1 && clientes[k].servico != 0){
                         printf("Escolha uma opção válida!");
                     }
-                }while(clientes[k].servico != 2 && clientes[k].servico != 1 && clientes[k].servico != 0 && clientes[k].servico == '\0');
+                }while(clientes[k].servico != 2 && clientes[k].servico != 1 && clientes[k].servico != 0);
                 armazenar_clientes();
-        } else {
-            printf("Cliente não encontrado!");
+            }
+        }
+        if(!encontrado){
+            printf("Cliente não encontrado");
         }
 
     }
-}
 //fun��es quanto a entregas:
 void planejar_entrega() {
     int id_entrega, tempo_estimado, id_cliente;
@@ -886,18 +901,71 @@ void delEntregasRealizada(int id_DelEntrega_realizada) {
     armazenar_entregasRealizadas();
 }
 
-void editEntrega(){
-    retirar_entregasPlanejadas();
-    int idProcuradoE;
+void editEntregasRealizadas(){
+    retirar_entregasRealizadas();
+    int idProcuradoE, encontrado = 0;
     printf("Digite o ID da entrega que deseja editar: ");
+    fflush(stdin);
     scanf("%d", &idProcuradoE);
-    limparBuffer();
-    for(int k = 0; k < tamanhoE; k++){
-        if(idProcuradoE == vetor_entregas_planejadas[k].id){
+    for(int k = 0; k < tamanhoE2; k++){
+        if(idProcuradoE == vetor_entregas_realizadas[k].entrega_e1.id){
+            encontrado = 1;
             do{
                 printf("Digite a nova origem da entrega: \n");
+                fflush(stdin);
+                fgets(vetor_entregas_realizadas[k].entrega_e1.origem, 20, stdin);
+                while(contemNumeros(vetor_entregas_realizadas[k].entrega_e1.origem) == 1){
+                    printf("A origem da entrega não pode conter números! Digite novamente: \n");
+                    fgets(vetor_entregas_realizadas[k].entrega_e1.origem, 20, stdin);
+                }
+            }while(vetor_entregas_realizadas[k].entrega_e1.origem[0] == '\0');
+
+            do{
+                printf("Digite o novo destino da entrega: \n");
+                fflush(stdin);
+                fgets(vetor_entregas_realizadas[k].entrega_e1.destino, 20, stdin);
+                while(contemNumeros(vetor_entregas_realizadas[k].entrega_e1.destino) == 1){
+                printf("O destino da entrega não pode conter números! Digite novamente: \n");
+                    fgets(vetor_entregas_realizadas[k].entrega_e1.destino, 20, stdin);
+                }
+            }while(vetor_entregas_realizadas[k].entrega_e1.destino[0] == '\0');
+
+            do{
+                printf("Digite o novo tempo estimado da entrega: \n");
+                char input[10];
+                fflush(stdin);
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = '\0';
+                while(contemLetras(input) == 1){
+                    printf("O tempo estimado da entrega não pode conter letras! Digite novamente: \n");
+                    fgets(input, sizeof(input), stdin);
+                }
+                vetor_entregas_realizadas[k].entrega_e1.tempo_estimado = atoi(input);
+                if(vetor_entregas_realizadas[k].entrega_e1.tempo_estimado <= 0){
+                    printf("O tempo estimado da entrega não pode ser negativo ou zero! Digite novamente: \n");
+                }while(vetor_entregas_realizadas[k].entrega_e1.tempo_estimado <= 0);
+            }while(vetor_entregas_realizadas[k].entrega_e1.tempo_estimado <= 0);
+            armazenar_entregasRealizadas();
+        }
+    }
+    if(!encontrado){
+        printf("Entrega não encontrada!");
+    }
+}
+
+void editEntregasPlanejadas(){
+    retirar_entregasPlanejadas();
+    int idProcuradoE, encontrado = 0;
+    printf("Digite o ID da entrega que deseja editar: ");
+    fflush(stdin);
+    scanf("%d", &idProcuradoE);
+    for(int k = 0; k < tamanhoE; k++){
+        if(idProcuradoE == vetor_entregas_planejadas[k].id){
+            encontrado = 1;
+            do{
+                printf("Digite a nova origem da entrega: \n");
+                fflush(stdin);
                 fgets(vetor_entregas_planejadas[k].origem, 20, stdin);
-                limparBuffer();
                 while(contemNumeros(vetor_entregas_planejadas[k].origem) == 1){
                     printf("A origem da entrega não pode conter números! Digite novamente: \n");
                     fgets(vetor_entregas_planejadas[k].origem, 20, stdin);
@@ -906,8 +974,8 @@ void editEntrega(){
 
             do{
                 printf("Digite o novo destino da entrega: \n");
+                fflush(stdin);
                 fgets(vetor_entregas_planejadas[k].destino, 20, stdin);
-                limparBuffer();
                 while(contemNumeros(vetor_entregas_planejadas[k].destino) == 1){
                     printf("O destino da entrega não pode conter números! Digite novamente: \n");
                     fgets(vetor_entregas_planejadas[k].destino, 20, stdin);
@@ -917,20 +985,23 @@ void editEntrega(){
             do{
                 printf("Digite o novo tempo estimado da entrega: \n");
                 char input[10];
+                fflush(stdin);
                 fgets(input, sizeof(input), stdin);
-                limparBuffer();
                 input[strcspn(input, "\n")] = '\0';
                 while(contemLetras(input) == 1){
                     printf("O tempo estimado da entrega não pode conter letras! Digite novamente: \n");
-                    continue;
+                    fgets(input, sizeof(input), stdin);
                 }
-                entrega.tempo_estimado = atoi(input);
+                vetor_entregas_planejadas[k].tempo_estimado = atoi(input);
                 if(vetor_entregas_planejadas[k].tempo_estimado <= 0){
                     printf("O tempo estimado da entrega não pode ser negativo ou zero! Digite novamente: \n");
                 }
-            }while(vetor_entregas_planejadas.tempo_estimado <= 0 && vetor_entregas_planejadas.tempo_estimado == '\0');
+            }while(vetor_entregas_planejadas[k].tempo_estimado <= 0 && vetor_entregas_planejadas[k].tempo_estimado == '\0');
             armazenar_entregasPlanejadas();
         }
+    }
+    if(!encontrado){
+        printf("Entrega não encontrada!");
     }
 }
 
