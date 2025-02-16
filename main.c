@@ -101,6 +101,11 @@ int menuUniversal(){
     return escolhaOperacao;
 }
 
+void limparBuffer(){
+    char c;
+    while((c = getchar()) != '\n' && c != EOF);
+}
+
 // arquivos iniciais
 void criar_arquivos_iniciais(){
     int ID_incial = 1;
@@ -424,7 +429,7 @@ void delFuncionario() {
     int idProcurado;
     scanf("%d", &idProcurado);
     for (int k = 0; k < tamanhoF; k++) {
-        if (idProcurado == veiculos[k].id) {
+        if (idProcurado == funcionarios[k].id) {
             for (int j = k; j < tamanhoF-1; j++){
                 funcionarios[j] = funcionarios[j + 1];
             }
@@ -706,7 +711,7 @@ void planejar_entrega() {
     printf("Qual � o ID do cliente que vai receber a entrega?\n");
     scanf("%d", &id_cliente);
 
-    printf("Qual � a CIDADE da cede respons�vel pela entrega?\n");
+    printf("Qual � a CIDADE-SEDE respons�vel pela entrega?\n");
     scanf("%s", &origem);
 
     printf("Em HORAS, qual � o tempo de entrega estimado da entrega?\n");
@@ -771,7 +776,7 @@ struct Entrega_e1 encontrar_entrega_planejada(int id_entrega) {
     }
 }
 
-//Funcao deletar a entrega ja realizada
+//funcao deletar a entrega planejada
 struct Entrega_e1 vetor_entregas_planejadas[1000];
 int tamanhoE = 0;
 void retirar_entregasPlanejadas() {
@@ -806,32 +811,89 @@ void armazenar_entregasPlanejadas() {
         fwrite(&vetor_entregas_planejadas[j], sizeof(struct Entrega_e1), 1, banco_de_entregas_planejadas);
     }
     fclose(banco_de_entregas_planejadas);
-    printf("Mudan�a no banco de entregas planejadas concluida!\n");
+    printf("Mudança no banco de entregas planejadas concluida!\n");
 }
 
-void delEntregasPlanejada(int id_DelEntrega_realizada) {
-    retirar_entregasPlanejadas();
+void delEntregasPlanejada() {
+    view_clientes();
+    printf("Digite o ID da entrega planejada que deseja deletar: \n");
+    int idProcurado;
+    scanf("%d", &idProcurado);
+    //recebe o id da entrega realizada equivalente ao id planejado para retirar o planejado
     for (int k = 0; k < tamanhoE; k++) {
-        if (id_DelEntrega_realizada == vetor_entregas_planejadas[k].id) {
+        if (idProcurado == vetor_entregas_planejadas[k].id) {
             for (int j = k; j < tamanhoE-1; j++){
                 vetor_entregas_planejadas[j] = vetor_entregas_planejadas[j + 1];
             }
             tamanhoE--;
-            printf("Entrega realizada deletada com sucesso!\n");
+            printf("Entrega planejada de ID equivalente a realizada deletada com sucesso!\n");
             break;
         }
     }
     armazenar_entregasPlanejadas();
 }
 
+//Funcao deletar a entrega ja realizada
+struct Entrega_e2 vetor_entregas_realizadas[1000];
+int tamanhoE2 = 0;
+void retirar_entregasRealizadas() {
+    FILE *banco_de_entregas_realizadas = fopen("entregas_realizadas.dat", "rb");
+    if (banco_de_entregas_realizadas == NULL) {
+        printf("Erro ao abrir o arquivo de entregas realizadas\n");
+        exit(1);
+    }
+
+    while(1){
+        fseek(banco_de_entregas_realizadas, sizeof(struct Entrega_e2) * tamanhoE2, SEEK_SET);
+        fread(&vetor_entregas_realizadas[tamanhoE2], sizeof(struct Entrega_e2), 1, banco_de_entregas_realizadas);
+
+        if(feof(banco_de_entregas_realizadas)){
+            fclose(banco_de_entregas_realizadas);
+            break;
+        }
+        tamanhoE2++;
+    }
+    fclose(banco_de_entregas_realizadas);
+}
+
+//colocando as entregas realizadas modificadas de volta no banco de dados
+void armazenar_entregasRealizadas() {
+    FILE *banco_de_entregas_realizadas = fopen("entregas_realizadas.dat", "wb");
+    if (banco_de_entregas_realizadas == NULL) {
+        printf("Erro ao abrir o arquivo de entregas realizadas\n");
+        exit(1);
+    }
+
+    for (int j = 0; j < tamanhoE2; j++) {
+        fwrite(&vetor_entregas_realizadas[j], sizeof(struct Entrega_e2), 1, banco_de_entregas_realizadas);
+    }
+    fclose(banco_de_entregas_realizadas);
+    printf("Mudança no banco de entregas realizadas concluida!\n");
+}
+
+void delEntregasRealizada(int id_DelEntrega_realizada) {
+    retirar_entregasRealizadas();
+    for (int k = 0; k < tamanhoE2; k++) {
+        if (id_DelEntrega_realizada == vetor_entregas_realizadas[k].entrega_e1.id) {
+            for (int j = k; j < tamanhoE2-1; j++){
+                vetor_entregas_realizadas[j] = vetor_entregas_realizadas[j + 1];
+            }
+            tamanhoE2--;
+            printf("Entrega realizada deletada com sucesso!\n");
+            break;
+        }
+    }
+    armazenar_entregasRealizadas();
+}
+
 void editEntrega(){
     retirar_entregasPlanejadas();
-    int idProcurado;
+    int idProcuradoE;
     printf("Digite o ID da entrega que deseja editar: ");
     scanf("%d", &idProcuradoE);
     limparBuffer();
     for(int k = 0; k < tamanhoE; k++){
-        if(idProcurado == vetor_entregas_planejadas[k].id){
+        if(idProcuradoE == vetor_entregas_planejadas[k].id){
             do{
                 printf("Digite a nova origem da entrega: \n");
                 fgets(vetor_entregas_planejadas[k].origem, 20, stdin);
@@ -955,6 +1017,6 @@ struct Entrega_e2 encontrar_entrega_realizada(int id_entrega_realizada) {
 }
 
 int main() {
-
+    
     return 0;
 }
