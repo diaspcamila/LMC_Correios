@@ -698,6 +698,7 @@ void editCliente(){
                     input[strcspn(input, "\n")] = '\0';
                     if (strlen(input) == 0) {
                         printf("Entrada vazia! Digite um número válido (0, 1 ou 2).\n");
+                        fgets(input, sizeof(input), stdin);
                     }
                     while(contemLetras(input) == 1){
                         printf("O tipo de serviço é classificado como número! Digite novamente: \n");
