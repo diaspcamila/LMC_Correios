@@ -104,12 +104,47 @@ void criar_veiculo(){
     int carga, disponivel, id_veic;
     //recolhendo as informa��es do usu�rio
 
-    printf("Digite o tipo e carga do veiculo (em KG) a ser registrado, respectivamente:\n");
-    scanf("%s %d", &tipo, &carga);
+    //tipo
+    while (tipo[0] == '\0'){
+        printf("Digite o tipo do veículo: \n");
+        scanf("%s", tipo);
+    }
+    while(contemNumeros(tipo) == 1){
+        printf("O tipo do veículo não pode conter números! Digite novamente: \n");
+        fflush(stdin);
+        scanf("%s", tipo);
+    }
 
-    getchar();
-    printf("O ve�culo est� dispon�vel? Digite '0' para SIM e '1' para N�O?\n");
-    scanf("%d", &disponivel);
+    //carga
+    do{
+        printf("Digite a carga máxima que o veículo pode carregar (em KG): \n");
+        fflush(stdin);
+        char inputC[10];
+        fgets(inputC, sizeof(inputC), stdin);
+        while(contemLetras(inputC) == 1){
+            printf("A carga máxima não pode conter letras! Digite novamente: \n");
+            fflush(stdin);
+            fgets(inputC, sizeof(inputC), stdin);
+        }
+        carga = atoi(inputC);
+        if(carga <= 0){
+            printf("A carga máxima não pode ser negativa ou zero! Digite novamente: \n");
+        }
+    }while(carga <= 0);
+
+    do{
+        printf("O veículo está disponível? Digite '0' para SIM e '1' para NÃO.\n");
+        char inputV[10];
+        fgets(inputV, sizeof(inputV), stdin);
+        while(contemLetras(inputV) == 1){
+            printf("A disponibilidade do veículo é classificada como número! Digite novamente: \n");
+            fgets(inputV, sizeof(inputV), stdin);
+        }
+        disponivel = atoi(inputV);
+        if(disponivel != 1 && disponivel != 0){
+            printf("Escplha uma opção válida!\n");
+        }
+    }while(disponivel != 0 && disponivel != 1);
 
     //montagem da vari�vel tipo veiculo
     //tipo e carga
@@ -291,9 +326,15 @@ void criar_funcionario(){
     char nome[50];
     int id_func;
 
-    printf("Digite o nome completo do Funcion�rio: \n");
-    fflush(stdin);
-    fgets(nome, sizeof(nome), stdin);
+    do{
+        printf("Digite o nome completo do Funcion�rio: \n");
+        fflush(stdin);
+        fgets(nome, sizeof(nome), stdin);
+        while(contemNumeros(nome)==1){
+            printf("O nome do funcionário não pode conter números! Digite novamente.\n");
+            fgets(nome, sizeof(nome), stdin);
+        }
+    }while(nome[0]=='\0');
 
     FILE *arquivo = fopen("mem_func.dat", "rb");
     fread(&id_func, sizeof(int), 1, arquivo);
@@ -313,7 +354,6 @@ void criar_funcionario(){
     }
     fclose(banco_de_funcionarios);
 }
-
 
 struct Funcionario encontrar_funcionario(int id){
     FILE *banco_de_funcionarios = fopen("funcionarios.dat", "rb");
@@ -434,31 +474,93 @@ void criar_cliente(){
     int id_cliente, servico, numero;
     char nome[50], estado[20], cidade[20], bairro[20], rua[20];
 
-    printf("Digite o nome completo do cliente: \n");
-    fflush(stdin);
-    fgets(nome, sizeof(nome), stdin);
+    //nome
+    do{
+        printf("Digite o nome completo do cliente: \n");
+        fflush(stdin);
+        fgets(nome, sizeof(nome), stdin);
+        while(contemNumeros(nome) == 1){
+            printf("O nome do cliente não pode conter números! Digite novamente.\n");
+            fgets(nome, sizeof(nome), stdin);
+        }
+    }while(nome[0] == '\0');
 
-    printf("Digite o ESTADO onde o cliente reside: \n");
-    fflush(stdin);
-    fgets(estado, sizeof(estado), stdin);
+    //estado
+    do{
+        printf("Digite o ESTADO onde o cliente reside: \n");
+        fflush(stdin);
+        fgets(estado, sizeof(estado), stdin);
+        while(contemNumeros(estado) == 1){
+            printf("O Estado do cliente não pode conter números! Digite novamente. \n");
+            fgets(estado, sizeof(estado), stdin);
+        }
+    }while(estado[0] == '\0');
 
-    printf("Digite a CIDADE onde o cliente reside: \n");
-    fflush(stdin);
-    fgets(cidade, sizeof(cidade), stdin);
+    //cidade
+    do{
+        printf("Digite a CIDADE onde o cliente reside: \n");
+        fflush(stdin);
+        fgets(cidade, sizeof(cidade), stdin);
+        while(contemNumeros(cidade) == 1){
+            printf("A cidade do cliente não pode conter números! Digite novamente. \n");
+            fgets(cidade, sizeof(cidade), stdin);
+        }
+    }while(cidade[0] == '\0');
 
-    printf("Digite o BAIRRO onde o cliente reside: \n");
-    fflush(stdin);
-    fgets(bairro, sizeof(bairro), stdin);
 
-    printf("Digite a RUA onde o cliente reside: \n");
-    fflush(stdin);
-    fgets(rua, sizeof(rua), stdin);
+    do{
+        printf("Digite o BAIRRO onde o cliente reside: \n");
+        fflush(stdin);
+        fgets(bairro, sizeof(bairro), stdin);
+        while(contemNumeros(bairro) == 1){
+            printf("O bairro não pode conter números! Digite novamente.\n");
+            fgets(bairro, sizeof(bairro), stdin);
+        }
+    }while(bairro[0] == '\0');
 
-    printf("Digite o NUMERO da casa do cliente: \n");
-    scanf("%d", &numero);
+    do{
+        printf("Digite a RUA onde o cliente reside: \n");
+        fflush(stdin);
+        fgets(rua, sizeof(rua), stdin);
+        while(contemNumeros(rua) == 1){
+            printf("O nome da rua não pode conter números! Digite novamente.\n");
+            fgets(rua, sizeof(rua), stdin);
+        }
+    }while(rua[0]=='\0');
 
-    printf("Qual � o tipo do servico do cliente? economico(0), padrao(1) ou premium(2)? \n");
-    scanf("%d", &servico);
+    do{
+        printf("Digite o NUMERO da casa do cliente: \n");
+        fflush(stdin);
+        char input[10];
+        fgets(input, sizeof(input), stdin);
+        while(contemLetras(input) == 1){
+            printf("O número da rua não pode conter letras! Digite novamente: \n");
+            fgets(input, sizeof(input), stdin);
+        }
+        numero = atoi(input);
+        if(numero <= 0){
+            printf("O número não pode ser 0 ou negativo!");
+        }
+    }while(numero <= 0);
+
+    do{
+        printf("Qual � o tipo do servico do cliente? economico(0), padrao(1) ou premium(2)? \n");
+        char input[10];
+        fflush(stdin);
+        fgets(input, sizeof(input), stdin);
+        if (strlen(input) == 0) {
+            printf("Entrada vazia! Digite um número válido (0, 1 ou 2).\n");
+            fgets(input, sizeof(input), stdin);
+        }
+        while(contemLetras(input) == 1){
+            printf("O tipo de serviço é classificado como número! Digite novamente: \n");
+            fgets(input, sizeof(input), stdin);
+        }
+        servico = atoi(input);
+        if(servico != 0 && servico != 1 && servico != 2){
+            printf("Escolha uma opção válida!\n");
+        }
+    }while(servico != 0 && servico != 1 && servico != 2);
 
     FILE *arquivo = fopen("mem_cliente.dat", "rb");
     fread(&id_cliente, sizeof(int), 1, arquivo);
