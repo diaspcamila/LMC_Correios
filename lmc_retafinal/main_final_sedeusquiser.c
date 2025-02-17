@@ -6,11 +6,10 @@
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
-    int escolhaInfo;
-    int escolhaOperacao;
+    int escolhaInfo, escolhaOperacao, escolhaEntregas;
+    printf("Pressione qualquer tecla númerica para inicializar o sistema!\n");
     do {
         do {
-            printf("Pressione qualquer tecla númerica para inicializar o sistema!\n");
             char input[10];
             fgets(input, sizeof(input), stdin);
             while (contemLetras(input) == 1) {
@@ -19,7 +18,6 @@ int main() {
             }
             escolhaInfo = atoi(input);
             escolhaInfo = menuPrincipal();
-
             switch (escolhaInfo) {
                 case 0:
                     separarMenus();
@@ -28,8 +26,8 @@ int main() {
 
                 case 1: // Clientes
                     do {
-                        printf("Escolha uma opção do menu de clientes: \n");
                         fgets(input, sizeof(input), stdin);
+                        fflush(stdin);
                         while (contemLetras(input) == 1) {
                             printf("A escolha da operação é feita com números! Digite novamente.\n");
                             fgets(input, sizeof(input), stdin);
@@ -55,6 +53,7 @@ int main() {
                                 view_clientes();
                                 break;
                             case 5:
+                                printf("Voltando...\n");
                                 separarMenus();
                                 break; //
                             default:
@@ -62,12 +61,11 @@ int main() {
                                 break;
                         }
                     } while (escolhaOperacao != 5);
-
                     break;
-                case 2:
+                case 2: //veiculos
                     do {
-                        printf("Escolha uma opção do menu de veículos: \n");
                         fgets(input, sizeof(input), stdin);
+                        fflush(stdin);
                         while (contemLetras(input) == 1) {
                             printf("A escolha da operação é feita com números! Digite novamente.\n");
                             fgets(input, sizeof(input), stdin);
@@ -94,13 +92,51 @@ int main() {
                                 break;
                             case 5:
                                 separarMenus();
+                                printf("Voltando...\n");
                                 break; //
                             default:
                                 printf("Opção inválida! Tente novamente.\n");
                                 break;
                         }
                     }while(escolhaOperacao != 5);
-
+                    break;
+                case 3: //funcionarios
+                    do {
+                        fgets(input, sizeof(input), stdin);
+                        fflush(stdin);
+                        while (contemLetras(input) == 1) {
+                            printf("A escolha da operação é feita com números! Digite novamente.\n");
+                            fgets(input, sizeof(input), stdin);
+                        }
+                        escolhaOperacao = atoi(input);
+                        escolhaOperacao = menuUniversal();
+                        switch (escolhaOperacao) {
+                            case 1:
+                                separarMenus();
+                                criar_funcionario();
+                                break;
+                            case 2:
+                                separarMenus();
+                                editFuncionario();
+                                break;
+                            case 3:
+                                separarMenus();
+                                delFuncionario();
+                                break;
+                            case 4:
+                                separarMenus();
+                                view_funcionarios();
+                                break;
+                            case 5:
+                                separarMenus();
+                                printf("Voltando...\n");
+                                break; //
+                            default:
+                                printf("Opção inválida! Tente novamente.\n");
+                                break;
+                        }
+                    }while(escolhaOperacao != 5);
+                //case 4 caso das entregas!!
                 case 5:
                     printf("Saindo...\n");
                     break;
