@@ -101,11 +101,6 @@ int menuUniversal(){
     return escolhaOperacao;
 }
 
-void limparBuffer(){
-    char c;
-    while((c = getchar()) != '\n' && c != EOF);
-}
-
 // arquivos iniciais
 void criar_arquivos_iniciais(){
     int ID_incial = 1;
