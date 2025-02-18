@@ -3,6 +3,11 @@
 #include <string.h>
 #include "funcoes.h"
 
+void limparBuffer(){
+    char c;
+    while((c = getchar()) != '\n' && c != EOF);
+}
+
 //fun��es p/ checar se tem numero ou letra onde n�o deve
 int contemNumeros(const char *str){
     char numeros[] = "0123456789";
@@ -107,6 +112,7 @@ void criar_veiculo(){
     //tipo
     do{
         printf("Digite o tipo do veículo: \n");
+        limparBuffer();
         fflush(stdin);
         fgets(tipo, sizeof(tipo), stdin);
         while(contemNumeros(tipo) == 1){
@@ -119,6 +125,7 @@ void criar_veiculo(){
     //carga
     do{
         printf("Digite a carga máxima que o veículo pode carregar (em KG): \n");
+
         fflush(stdin);
         char inputC[10];
         fgets(inputC, sizeof(inputC), stdin);
@@ -143,7 +150,7 @@ void criar_veiculo(){
         }
         disponivel = atoi(inputV);
         if(disponivel != 1 && disponivel != 0){
-            printf("Escplha uma opção válida!\n");
+            printf("Escolha uma opção válida!\n");
         }
     }while(disponivel != 0 && disponivel != 1);
 
@@ -244,7 +251,7 @@ void armazenar_veiculos() {
         fwrite(&veiculos[j], sizeof(struct Veiculo), 1, banco_de_veiculos);
     }
     fclose(banco_de_veiculos);
-    printf("Mudan�a no banco de veiculos concluida!\n");
+    printf("Mudança no banco de veiculos concluida!\n");
 }
 
 void delVeiculo() {
@@ -328,7 +335,8 @@ void criar_funcionario(){
     int id_func;
 
     do{
-        printf("Digite o nome completo do Funcion�rio: \n");
+        printf("Digite o nome completo do Funcionário: \n");
+        limparBuffer();
         fflush(stdin);
         fgets(nome, sizeof(nome), stdin);
         while(contemNumeros(nome)==1){
@@ -424,7 +432,7 @@ void armazenar_funcionarios() {
         fwrite(&funcionarios[j], sizeof(struct Funcionario), 1, banco_de_funcionarios);
     }
     fclose(banco_de_funcionarios);
-    printf("Mudan�a no banco de funcionarios concluida!\n");
+    printf("Mudança no banco de funcionarios concluida!\n");
 }
 
 void delFuncionario() {
@@ -450,6 +458,7 @@ void editFuncionario(){
     int idProcuradoF, encontrado = 0;
     printf("Digite o ID do funcionário que deseja editar: ");
     scanf("%d", &idProcuradoF);
+    limparBuffer();
     fflush(stdin);
     for(int k = 0; k < tamanhoF; k++){
         if(idProcuradoF == funcionarios[k].id){
@@ -478,6 +487,7 @@ void criar_cliente(){
     //nome
     do{
         printf("Digite o nome completo do cliente: \n");
+        limparBuffer();
         fflush(stdin);
         fgets(nome, sizeof(nome), stdin);
         while(contemNumeros(nome) == 1){
@@ -489,6 +499,7 @@ void criar_cliente(){
     //estado
     do{
         printf("Digite o ESTADO onde o cliente reside: \n");
+        limparBuffer();
         fflush(stdin);
         fgets(estado, sizeof(estado), stdin);
         while(contemNumeros(estado) == 1){
@@ -545,7 +556,7 @@ void criar_cliente(){
     }while(numero <= 0);
 
     do{
-        printf("Qual � o tipo do servico do cliente? economico(0), padrao(1) ou premium(2)? \n");
+        printf("Qual é o tipo do servico do cliente? economico(0), padrao(1) ou premium(2)? \n");
         char input[10];
         fflush(stdin);
         fgets(input, sizeof(input), stdin);
@@ -656,7 +667,7 @@ void armazenar_clientes() {
         fwrite(&clientes[j], sizeof(struct Cliente), 1, banco_de_clientes);
     }
     fclose(banco_de_clientes);
-    printf("Mudan�a no banco de clientes concluida!\n");
+    printf("Mudança no banco de clientes concluida!\n");
 }
 
 void delCliente() {
@@ -681,6 +692,7 @@ void editCliente(){
     view_clientes();
     int idProcurado, encontrado = 0;
     printf("Digite o ID do cliente que deseja editar: ");
+    limparBuffer();
     fflush(stdin);
     scanf("%d", &idProcurado);
     for(int k = 0; k < tamanhoC; k++){
@@ -688,6 +700,7 @@ void editCliente(){
                 encontrado = 1;
                 do{
                     printf("Digite o novo nome do cliente: \n");
+                    limparBuffer();
                     fflush(stdin);
                     fgets(clientes[k].nome, 50, stdin);
                     while(contemNumeros(clientes[k].nome) == 1){
@@ -786,14 +799,14 @@ void planejar_entrega() {
     char origem[20];
 
     //recolhendo informa��es do usu�rio
-    printf("Qual � o ID do cliente que vai receber a entrega?\n");
+    printf("Qual é o ID do cliente que vai receber a entrega?\n");
     scanf("%d", &id_cliente);
-
-    printf("Qual � a CIDADE-SEDE respons�vel pela entrega?\n");
+    limparBuffer();
+    printf("Qual é a CIDADE-SEDE responsável pela entrega?\n");
     fflush(stdin);
     fgets(origem, sizeof(origem), stdin);
 
-    printf("Em HORAS, qual � o tempo de entrega estimado da entrega?\n");
+    printf("Em HORAS, qual é o tempo de entrega estimado da entrega?\n");
     scanf("%d", &tempo_estimado);
 
     //definindo ID da entrega;
@@ -1034,11 +1047,13 @@ void editEntregasPlanejadas(){
     printf("Digite o ID da entrega que deseja editar: ");
     fflush(stdin);
     scanf("%d", &idProcuradoE);
+    limparBuffer();
     for(int k = 0; k < tamanhoE; k++){
         if(idProcuradoE == vetor_entregas_planejadas[k].id){
             encontrado = 1;
             do{
                 printf("Digite a nova origem da entrega: \n");
+                limparBuffer();
                 fflush(stdin);
                 fgets(vetor_entregas_planejadas[k].origem, 20, stdin);
                 while(contemNumeros(vetor_entregas_planejadas[k].origem) == 1){
@@ -1049,6 +1064,7 @@ void editEntregasPlanejadas(){
 
             do{
                 printf("Digite o novo destino da entrega: \n");
+                limparBuffer();
                 fflush(stdin);
                 fgets(vetor_entregas_planejadas[k].destino, 20, stdin);
                 while(contemNumeros(vetor_entregas_planejadas[k].destino) == 1){
@@ -1085,7 +1101,7 @@ void realizar_entrega(int id_entrega_planejada) {
 
     //recolhendo informa��es do usu�rio
 
-    printf("Qual � o ID do funcionario que vai realizar a entrega?\n");
+    printf("Qual é o ID do funcionário que vai realizar a entrega?\n");
     scanf("%d", &id_funcionario);
 
     //recolhendo o primeiro ve�culo dispon�vel
@@ -1100,14 +1116,13 @@ void realizar_entrega(int id_entrega_planejada) {
 
         if (veiculo.disponivel == 0) {
             id_veiculo = veiculo.id;
-            //EDITAR: MUDAR O STATUS DO VEICULO PARA OCUPADO
             break;
         }
     }
 
     //definindo se a entrega pode ser realizada
     if (id_veiculo == -1) {
-        printf("Sem veiculos disponiveis. Impossivel realizar entrega");
+        printf("Sem veículos disponiveis. Impossível realizar entrega");
         return;
     }
 
@@ -1165,8 +1180,8 @@ struct Entrega_e2 encontrar_entrega_realizada(int id_entrega_realizada) {
 void gerar_relatorio(int id_entrega_realizada) {
     struct Entrega_e2 entrega_realizada = encontrar_entrega_realizada(id_entrega_realizada);
     printf("ID da entrega: %d\n", entrega_realizada.entrega_e1.id);
-    printf("ID do funcionario responsavel pela entrega: %d\n", entrega_realizada.funcionario.id);
-    printf("ID do veiculo utilizado na entrega: %d\n", entrega_realizada.veiculo.id);
+    printf("ID do funcionário responsável pela entrega: %d\n", entrega_realizada.funcionario.id);
+    printf("ID do veículo utilizado na entrega: %d\n", entrega_realizada.veiculo.id);
     printf("ID do cliente: %d\n", entrega_realizada.entrega_e1.cliente.id);
     printf("Origem: %s\nDestino: %s\n", entrega_realizada.entrega_e1.origem, entrega_realizada.entrega_e1.cliente.cidade);
     printf("Tempo total de entrega: %d\n", entrega_realizada.entrega_e1.tempo_estimado);
