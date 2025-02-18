@@ -37,6 +37,17 @@ void separarMenus(){
     printf("\n");
     printf("---------------------------------------------------------\n");
 }
+int menuEntregas(){
+    int escolhaEntregas;
+    printf("Escolha uma opção do menu de entregas: \n");
+    printf("---------------------------------------------------------\n");
+    printf("|          [1] - Gerenciar entregas planejadas           |\n");
+    printf("|          [2] - Gerenciar entregas realizadas           |\n");
+    printf("|          [2] - Gerar relatório                         |\n");
+    printf("|          [3] - Voltar                                  |\n");
+    printf("---------------------------------------------------------\n");
+    scanf("%d", &escolhaEntregas);
+}
 
 int menuPrincipal(){
     int escolhaInfo;
@@ -103,17 +114,17 @@ void criar_veiculo(){
     char tipo[50];
     int carga, disponivel, id_veic;
     //recolhendo as informa��es do usu�rio
-
     //tipo
-    while (tipo[0] == '\0'){
+    do{
         printf("Digite o tipo do veículo: \n");
-        scanf("%s", tipo);
-    }
-    while(contemNumeros(tipo) == 1){
-        printf("O tipo do veículo não pode conter números! Digite novamente: \n");
         fflush(stdin);
-        scanf("%s", tipo);
-    }
+        fgets(tipo, sizeof(tipo), stdin);
+        while(contemNumeros(tipo) == 1){
+            printf("O tipo do veículo não pode conter números! Digite novamente: \n");
+            fflush(stdin);
+            fgets(tipo, sizeof(tipo), stdin);
+        }
+    }while(tipo[0]=='\0');
 
     //carga
     do{
