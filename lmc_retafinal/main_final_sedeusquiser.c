@@ -130,20 +130,113 @@ int main() {
                             case 5:
                                 separarMenus();
                                 printf("Voltando...\n");
-                                break; //
+                                break;
                             default:
                                 printf("Opção inválida! Tente novamente.\n");
                                 break;
                         }
                     }while(escolhaOperacao != 5);
-                //case 4 caso das entregas!!
+                case 4:
+                    do {
+                        escolhaEntregas = menuEntregas();
+                        switch (escolhaEntregas) {
+                            case 1: // Entregas Planejadas
+                                do {
+                                    escolhaOperacao = menuUniversal();
+                                    switch (escolhaOperacao) {
+                                        case 1:
+                                            separarMenus();
+                                            planejar_entrega();
+                                            break;
+                                        case 2:
+                                            separarMenus();
+                                            editEntregasPlanejadas();
+                                            break;
+                                        case 3: {
+                                            int idD;
+                                            separarMenus();
+                                            printf("Digite o ID da entrega que deseja deletar.\n");
+                                            scanf("%d", &idD);
+                                            fflush(stdin);
+                                            delEntregasPlanejada(idD);
+                                            break;
+                                        }
+                                        case 4: {
+                                            int idP;
+                                            separarMenus();
+                                            printf("Digite o ID da entrega que deseja visualizar.\n");
+                                            scanf("%d", &idP);
+                                            fflush(stdin);
+                                            encontrar_entrega_planejada(idP);
+                                            break;
+                                        }
+                                        case 5:
+                                            separarMenus();
+                                            printf("Voltando...\n");
+                                            break;
+                                        default:
+                                            printf("Opção inválida! Tente novamente.\n");
+                                    }
+                                } while (escolhaOperacao != 5);
+                                break;
+
+                            case 2: // Entregas Realizadas
+                                do {
+                                    escolhaOperacao = menuUniversal();
+                                    switch (escolhaOperacao) {
+                                        case 1:
+                                            separarMenus();
+                                            planejar_entrega();
+                                            break;
+                                        case 2:
+                                            separarMenus();
+                                            editEntregasRealizadas();
+                                            break;
+                                        case 3: {
+                                            int idD;
+                                            separarMenus();
+                                            printf("Digite o ID da entrega que deseja deletar.\n");
+                                            scanf("%d", &idD);
+                                            fflush(stdin);
+                                            delEntregasRealizada(idD);
+                                            break;
+                                        }
+                                        case 4: {
+                                            int idP;
+                                            separarMenus();
+                                            printf("Digite o ID da entrega que deseja visualizar.\n");
+                                            scanf("%d", &idP);
+                                            fflush(stdin);
+                                            encontrar_entrega_realizada(idP);
+                                            break;
+                                        }
+                                        case 5:
+                                            separarMenus();
+                                            printf("Voltando...\n");
+                                            break;
+                                        default:
+                                            printf("Opção inválida! Tente novamente.\n");
+                                    }
+                                } while (escolhaOperacao != 5);
+                                break;
+
+                            case 3:
+                                printf("Voltando ao menu principal...\n");
+                                break;
+
+                            default:
+                                printf("Opção inválida! Tente novamente.\n");
+                        }
+                    } while (escolhaEntregas != 3);
+                    break;
+
                 case 5:
                     printf("Saindo...\n");
                     break;
 
                 default:
                     printf("Opção inválida! Tente novamente.\n");
-                }
+                }while(escolhaInfo != 5);
             } while (escolhaInfo != 5);
         }while (escolhaInfo != 5);
     return 0;
