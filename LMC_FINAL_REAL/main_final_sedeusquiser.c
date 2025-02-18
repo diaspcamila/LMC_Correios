@@ -15,7 +15,7 @@ int main() {
             case 0:
                 criar_arquivos_iniciais();
                 break;
-            
+
             //CLIENTES
             case 1:
                 menuUniversal();
@@ -45,7 +45,7 @@ int main() {
                         printf("Operação inválida.\n");
                 }
                 break;
-                    
+
                 //VEICULOS
                 case 2:
                     menuUniversal();
@@ -119,13 +119,15 @@ int main() {
 
                             switch(input_3){
                                 case 1:
+                                    limparBuffer();
                                     planejar_entrega();
                                     break;
-                                
+
                                 case 2:
+
                                     editEntregasPlanejadas();
                                     break;
-                                
+
                                 case 3:
                                     view_entregaPlanejada();
                                     printf("Digite o ID da entrega planejada que deseja excluir.\n");
@@ -145,12 +147,12 @@ int main() {
 
                                 case 5:
                                     break;
-                                
+
                                 default:
                                     printf("Operação inválida\n");
                             }
                             break;
-                        
+
                         case 2:
                             //ENTREGAS REALIZADAS
                             menuUniversal();
@@ -161,22 +163,22 @@ int main() {
                                     view_entregaPlanejada();
                                     printf("Digite o ID da entrega planejada que deseja realizar.\n");
                                     scanf("%d", &input_4);
-
+                                    limparBuffer();
                                     realizar_entrega(input_4);
                                     break;
-                                
+
                                 case 2:
                                     view_entregaRealizada();
                                     editEntregasRealizadas();
                                     break;
-                                
+
                                 case 3:
                                     view_entregaRealizada();
                                     printf("Digite o ID da entrega realizada que deseja excluir.\n");
                                     scanf("%d", &input_4);
                                     delEntregasRealizadas(input_4);
                                     break;
-                                
+
                                 case 4:
                                     view_entregaRealizada();
                                     printf("Digite o ID da entrega realizada que deseja visualizar com mais detalhes.\n");
@@ -185,22 +187,22 @@ int main() {
                                     struct Entrega_e2 vis_entregaRealizada = encontrar_entrega_realizada(input_4);
                                     printf("ID: %d - CLIENTE: %s - FUNCIONARIO: %s - VEICULO TIPO: %s\n", vis_entregaRealizada.entrega_e1.id, vis_entregaRealizada.entrega_e1.cliente.nome, vis_entregaRealizada.funcionario.nome, vis_entregaRealizada.veiculo.tipo);
                                     break;
-                                
+
                                 case 5:
                                     break;
-                                
+
                                 default:
                                     printf("Operação inválida.\n");
                             }
                             break;
-                        
+
                         case 3:
                             view_entregaRealizada();
                             printf("Digite o ID da entrega realizada na qual deseja gerar um relatorio.\n");
                             scanf("%d", &input_4);
 
                             gerar_relatorio(input_4);
-                            break;      
+                            break;
                 }
                 break;
 
